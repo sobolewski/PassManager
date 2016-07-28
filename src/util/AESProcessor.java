@@ -67,7 +67,7 @@ import model.ExportContainer;
 
 // UNLIMITED JCE POLICY...
 
-public class AES2_new {
+public class AESProcessor {
 
 	private static byte[] salt;
 	private static int pswdIterations = 65536;

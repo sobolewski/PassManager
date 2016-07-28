@@ -1,33 +1,18 @@
 package controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
-import java.util.ArrayList;
 import java.util.Optional;
-
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -47,10 +32,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import model.DataEntry;
 import model.UserAccount;
-import util.AES;
-import util.AES2_new;
+import util.AESProcessor;
 import util.PBKDF2;
-import util.RandomPasswordGenerator;
 
 public class MainWindowController {
 
@@ -66,11 +49,10 @@ public class MainWindowController {
 	private TextField textfieldDomainUrl, textfieldUsername, textfieldPassword;
 	@FXML
 	private HBox hboxMenu;
+	
 	private ObservableList<DataEntry> dataList = FXCollections.observableArrayList();
 	private Main main;
-	
-	private AES aes = new AES();
-	private AES2_new aes2_new = new AES2_new();
+	private AESProcessor aesProcessor = new AESProcessor();
 
 	// wird immer aufgerufen beim starten des controllers
 	public void initialize() {
@@ -124,13 +106,7 @@ public class MainWindowController {
 		
 		if (!textfieldDomainUrl.getText().isEmpty() & !textfieldUsername.getText().isEmpty()) {
 			try {
-				// byte[] salt = PBKDF2.getSalt();
-				// vorerst noch statisches salz, ich könnte es unischtbar in der
-				// tabelle mitspeichern
-
-				
-				byte[] salt = "+a,v9H".getBytes("UTF-8");
-				byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2(textfieldDomainUrl.getText(), textfieldUsername.getText(), "master_M)FPass92f33g", salt);
+				byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2(textfieldDomainUrl.getText(), textfieldUsername.getText(), "master_M)FPass92f33g");
 				textfieldPassword.setText(PBKDF2.generatePasswordFromBytes(hashedBytes, 12));
 				textfieldPassword.setVisible(true);
 
@@ -146,8 +122,6 @@ public class MainWindowController {
 			infoAlert.setContentText("To add an entry use the bottom textfields");
 			infoAlert.showAndWait();
 		}
-		
-
 	}
 
 	public void saveNewEntry() {
@@ -161,9 +135,7 @@ public class MainWindowController {
 			textfieldPassword.setVisible(false);
 		} else {
 			showInfoAlert();
-
 		}
-
 	}
 
 	public void showInfoAlert() {
@@ -213,7 +185,7 @@ public class MainWindowController {
 			if (file != null) {
 				
 				try {
-					this.dataList = aes2_new.importDataListFromFile(enteredPw, file);
+					this.dataList = aesProcessor.importDataListFromFile(enteredPw, file);
 					tableView.setItems(dataList);
 				} catch (InvalidKeyException | ClassNotFoundException | NoSuchAlgorithmException
 						| InvalidKeySpecException | NoSuchPaddingException | InvalidAlgorithmParameterException
@@ -221,11 +193,6 @@ public class MainWindowController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-						
-				/*
-				this.dataList = aes.decryptDataListFromFile(enteredPw, file);
-				tableView.setItems(dataList);
-				*/
 			}
 		}
 	}
@@ -247,12 +214,9 @@ public class MainWindowController {
 			fileChooser.getExtensionFilters().add(extFilter);
 			File file = fileChooser.showSaveDialog(main.primaryStage);
 			if (file != null) {
-				//writeDataListCipheredToFile(file, dataList);
 				try {
 				
-					aes2_new.exportDataListContainerToFile(dataList, enteredPw, file);
-					
-					//aes.encryptDataListToFile(dataList, enteredPw, file);
+					aesProcessor.exportDataListContainerToFile(dataList, enteredPw, file);
 
 				} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
 						| NoSuchPaddingException | InvalidParameterSpecException | IllegalBlockSizeException
@@ -260,17 +224,14 @@ public class MainWindowController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-		}}
+			}
+		}
 	}
 
 	public void btnEncriptor() {
 
 		try {
-			// byte[] salt = PBKDF2.getSalt();
-			// vorerst noch statisches salz, ich könnte es unischtbar in der
-			// tabelle mitspeichern
-			byte[] salt = "+a,v9H".getBytes("UTF-8");
-			byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2("www.yahoo.de", "testuser", "master_M)FPass92f33g", salt);
+			byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2("www.yahoo.de", "testuser", "master_M)FPass92f33g");
 			System.out.println("ByteArrayLenght = " + hashedBytes.length);
 			System.out.println(PBKDF2.generatePasswordFromBytes(hashedBytes, 12));
 
@@ -280,108 +241,6 @@ public class MainWindowController {
 		}
 	}
 
-	/*
-	 * High Level Algorithm : 1. Generate a AES key (specify the Key size during
-	 * this phase) 2. Create the Cipher 3. To Encrypt : Initialize the Cipher
-	 * for Encryption 4. To Decrypt : Initialize the Cipher for Decryption
-	 * ------------ Step 1. Generate an AES key using KeyGenerator Initialize
-	 * the keysize to 128 bits (16 bytes)
-	 * 
-	 * Step 2. Generate an Initialization Vector (IV) a. Use SecureRandom to
-	 * generate random bits The size of the IV matches the blocksize of the
-	 * cipher (128 bits for AES) b. Construct the appropriate IvParameterSpec
-	 * object for the data to pass to Cipher's init() method
-	 * 
-	 * final int AES_KEYLENGTH = 128; // change this as desired for the security
-	 * level you want byte[] iv = new byte[AES_KEYLENGTH / 8]; // Save the IV
-	 * bytes or send it in plaintext with the encrypted data so you can decrypt
-	 * the data later SecureRandom prng = new SecureRandom();
-	 * prng.nextBytes(iv);
-	 * 
-	 * Step 3. Create a Cipher by specifying the following parameters a.
-	 * Algorithm name - here it is AES b. Mode - here it is CBC mode c. Padding
-	 * - e.g. PKCS7 or PKCS5
-	 * 
-	 * Step 4. Initialize the Cipher for Encryption
-	 */
-
-	private void writeDataListCipheredToFile(File file, ObservableList<DataEntry> dataList) {
-		try {
-
-			Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			SecretKeySpec key = new SecretKeySpec("0123456789abcdef".getBytes("UTF-8"), "AES");
-			c.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec("AAAAAAAAAAAAAAAA".getBytes("UTF-8")));
-			CipherOutputStream cos = new CipherOutputStream(new BufferedOutputStream(new FileOutputStream(file)), c);
-
-			ObjectOutputStream oos = new ObjectOutputStream(cos);
-
-			oos.writeObject(new ArrayList<DataEntry>(dataList));
-			oos.flush();
-			oos.close();
-			System.out.println("exportiert!!");
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidAlgorithmParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private ObservableList<DataEntry> getDataEntriesFromCypheredFile(File file) {
-		ArrayList<DataEntry> del = new ArrayList<DataEntry>();
-		try {
-			Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			SecretKeySpec key = new SecretKeySpec("0123456789abcdef".getBytes("UTF-8"), "AES");
-			c.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec("AAAAAAAAAAAAAAAA".getBytes("UTF-8")));
-			CipherInputStream cis = new CipherInputStream(new BufferedInputStream(new FileInputStream(file)), c);
-
-			ObjectInputStream ois = new ObjectInputStream(cis);
-
-			del = (ArrayList<DataEntry>) ois.readObject();
-			ois.close();
-
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidAlgorithmParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return FXCollections.observableArrayList(del);	
-	}
 	
 	
 	public void showTooltipGenerate() {

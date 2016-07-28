@@ -26,12 +26,9 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;
-		
 
 		mainWindow();
 		//loginWindow();
-		
-		//System.out.println(String.format("%x", new BigInteger(PBKDF2.hashPassword("ich", "salt"))));
 
 	}
 	
@@ -83,6 +80,9 @@ public class Main extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
+	
+	
+	
 	
 	/**
 	 * Returns the person file preference, i.e. the file that was last opened.
