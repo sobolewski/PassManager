@@ -8,21 +8,21 @@ import java.util.Map;
 public class UserAccount implements Serializable{
 
 	private static String username;
-	private static String  password;
+	private static byte[]  password; // PBKDF2 gehashed
+	private static byte[] salt;
 	private List<DataEntry> dataBase;
-	
-	public String testString;
 	
 
 	public UserAccount(){
 	}
 	
-	public UserAccount(String username, String password){
+	public UserAccount(String username, byte[] password, byte[] salt){
 		UserAccount.username = username;
 		UserAccount.password = password;
+		UserAccount.salt = salt;
 	}
 	
-	public UserAccount(String username, String password, List<DataEntry> listOfDataEntries) {
+	public UserAccount(String username, byte[] password, List<DataEntry> listOfDataEntries) {
 		UserAccount.username = username;
 		UserAccount. password = password;
 		this.dataBase = listOfDataEntries;
@@ -33,11 +33,17 @@ public class UserAccount implements Serializable{
 	public static void setUsername(String username) {
 		UserAccount.username = username;
 	}
-	public static String getPassword() {
+	public static byte[] getPassword() {
 		return password;
 	}
-	public static void setPassword(String password) {
+	public static void setPassword(byte[] password) {
 		UserAccount.password = password;
+	}
+	public static byte[] getSalt() {
+		return salt;
+	}
+	public static void setSalt(byte[] salt) {
+		UserAccount.salt = salt;
 	}
 
 

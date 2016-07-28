@@ -63,7 +63,7 @@ import model.ExportContainer;
  * re-use an old one or avoid the automatic re-generation process. Algorithms
  */
 
-// AES symmetrical encription-decription
+// AES symmetrical encription-decription 
 
 // UNLIMITED JCE POLICY...
 

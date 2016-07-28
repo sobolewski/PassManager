@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.Properties;
 
 import model.UserAccount;
@@ -17,15 +18,19 @@ public class AppProperties {
 		OutputStream output = null;
 
 		try {
-
 			output = new FileOutputStream("config.properties");
-
 			// set the properties value
-			prop.setProperty("password", ua.getPassword());
+			//wenn man binärdaten in einen string packen will -> base64 encoding
+			
+			String pwString = Base64.getEncoder().encodeToString(ua.getPassword());
+			String saltString = Base64.getEncoder().encodeToString(ua.getSalt());
+			
+			prop.setProperty("q9p39gAuj3S439gnfx+O<5kxjbnykbcurrymitschrankerotweiss", pwString); //password
+			prop.setProperty("xYga7hGn94nmlfaaLdb.yb1mfbkb-ycurrymitschrankerotweiss", saltString);	//salt
 
+			
 			// save properties to project root folder
 			prop.store(output, null);
-
 		} catch (IOException io) {
 			io.printStackTrace();
 		} finally {
@@ -41,13 +46,9 @@ public class AppProperties {
 
 	public static Properties loadProperties() throws IOException {
 		Properties prop = new Properties();
-		InputStream input = null;
-
-		input = new FileInputStream("config.properties");
-
+		InputStream input = new FileInputStream("config.properties");
 		// load a properties file
 		prop.load(input);
-
 		// get the property value and print it out
 		// System.out.println(prop.getProperty("password"));
 		input.close();

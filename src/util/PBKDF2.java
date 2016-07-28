@@ -3,6 +3,7 @@ package util;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -14,6 +15,7 @@ public class PBKDF2 {
 	private static final int KEY_LENGTH = 512; // bits
 	private static final String ALPHABET = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&'()*+,-.:;<=>?@[]\\^_`{|}~"; // 93Zeichen
 	private static final String salt = "=?93g)s<sXd:DSa";
+	
 																																			 
 
 	/**
@@ -64,6 +66,19 @@ public class PBKDF2 {
 
 		// return String.format("%x", new BigInteger(hashedPassword));
 	}
+	
+	public byte[] hashMasterPasswordPBKDF2(String masterPassword, byte[] randomSalt) throws NoSuchAlgorithmException, InvalidKeySpecException{
+
+		char[] passwordChars = masterPassword.toCharArray();
+		SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+		PBEKeySpec spec = new PBEKeySpec(passwordChars, randomSalt, ITERATIONS, KEY_LENGTH);
+		SecretKey keyFactory = secretKeyFactory.generateSecret(spec);
+		byte[] hashedPassword = keyFactory.getEncoded();
+		return hashedPassword;
+	}
+	
+	
+	
 
 	/**
 	 * Die Methode verarbeitet einen ByteArray zu einem String von fetlegbarer
@@ -98,5 +113,7 @@ public class PBKDF2 {
 		}
 		return pw;
 	}
-
+	
+	
+	
 }

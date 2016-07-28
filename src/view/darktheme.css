@@ -63,7 +63,7 @@
 .table-view:focused .table-row-cell:filled:focused:selected {
     /*-fx-background-color: -fx-focus-color;*/
     -fx-background-color: #009688;
-    -fx-font-size: 10pt;
+    -fx-font-size: 9pt;
      -fx-font-family: "Open Sans Semibold";
 	-fx-opacity: 0.8;
 }

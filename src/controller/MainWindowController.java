@@ -1,6 +1,5 @@
 package controller;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,7 +8,11 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Optional;
+import java.util.Properties;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -33,14 +36,15 @@ import javafx.stage.FileChooser;
 import model.DataEntry;
 import model.UserAccount;
 import util.AESProcessor;
+import util.AppProperties;
 import util.PBKDF2;
 
 public class MainWindowController {
 
 	@FXML
-	private Button btnChangeText, btnLoginScreen, btnOpenDB, btnExportDB, btnEncriptor, btnSave, btnDelete,
-			btnGeneratePW, btnRowSelectTest, btnCopy;
-	@FXML Label labelNorth;
+	private Button btnChangeText, btnLoginScreen, btnOpenDB, btnExportDB, btnSave, btnDelete, btnGeneratePW, btnCopy;
+	@FXML
+	Label labelNorth;
 	@FXML
 	private TableView<DataEntry> tableView;
 	@FXML
@@ -49,7 +53,7 @@ public class MainWindowController {
 	private TextField textfieldDomainUrl, textfieldUsername, textfieldPassword;
 	@FXML
 	private HBox hboxMenu;
-	
+
 	private ObservableList<DataEntry> dataList = FXCollections.observableArrayList();
 	private Main main;
 	private AESProcessor aesProcessor = new AESProcessor();
@@ -59,7 +63,6 @@ public class MainWindowController {
 		columnUrl.setCellValueFactory(new PropertyValueFactory<DataEntry, String>("url"));
 		columnUsername.setCellValueFactory(new PropertyValueFactory<DataEntry, String>("username"));
 		columnPassword.setCellValueFactory(new PropertyValueFactory<DataEntry, String>("password"));
-		
 	}
 
 	public void setMain(Main main) {
@@ -69,44 +72,46 @@ public class MainWindowController {
 	}
 
 	public void initTestData() {
-		dataList.add(new DataEntry("www.yahoo.de", "hoNk99", "apfuh98f"));
-		dataList.add(new DataEntry("www.gmail.de", "hoNk99", "ar3g24A"));
+		dataList.add(new DataEntry("youhorn.com", "holzTitte1983", "qwertzui"));
+		dataList.add(new DataEntry("www.gmail.de", "hoNk99", "password"));
 		dataList.add(new DataEntry("www.zalando.de", "hoNk99", "Öm.;A=ÜF§"));
 	}
-	
-	public void copyPwToClipboard(){
+
+	public void copyPwToClipboard() {
 		TablePosition pos = tableView.getSelectionModel().getSelectedCells().get(0);
 		int row = pos.getRow();
 		DataEntry dE = tableView.getItems().get(row);
 		TableColumn col = pos.getTableColumn();
 		String data = (String) col.getCellObservableValue(dE).getValue();
 		final Clipboard clipboard = Clipboard.getSystemClipboard();
-        final ClipboardContent content = new ClipboardContent();
-        content.putString(data);
-        clipboard.setContent(content);
+		final ClipboardContent content = new ClipboardContent();
+		content.putString(data);
+		clipboard.setContent(content);
 	}
-	
-	public void btnRowSelectTest(){
-		TablePosition pos = tableView.getSelectionModel().getSelectedCells().get(0);
-		int row = pos.getRow();
 
-		// Item here is the table view type:
-		DataEntry dE = tableView.getItems().get(row);
-
-		TableColumn col = pos.getTableColumn();
-
-		// this gives the value in the selected cell:
-		String data = (String) col.getCellObservableValue(dE).getValue();
-		System.out.println("The selected row = "+row);
-		System.out.println("The selected column = "+col);
-		System.out.println("The selected data in the cell is = "+data);
-	}
+	/*
+	 * public void btnRowSelectTest(){ TablePosition pos =
+	 * tableView.getSelectionModel().getSelectedCells().get(0); int row =
+	 * pos.getRow();
+	 * 
+	 * // Item here is the table view type: DataEntry dE =
+	 * tableView.getItems().get(row);
+	 * 
+	 * TableColumn col = pos.getTableColumn();
+	 * 
+	 * // this gives the value in the selected cell: String data = (String)
+	 * col.getCellObservableValue(dE).getValue();
+	 * System.out.println("The selected row = "+row);
+	 * System.out.println("The selected column = "+col);
+	 * System.out.println("The selected data in the cell is = "+data); }
+	 */
 
 	public void generatePw() {
-		
+
 		if (!textfieldDomainUrl.getText().isEmpty() & !textfieldUsername.getText().isEmpty()) {
 			try {
-				byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2(textfieldDomainUrl.getText(), textfieldUsername.getText(), "master_M)FPass92f33g");
+				byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2(textfieldDomainUrl.getText(), textfieldUsername.getText(),
+						"master_M)FPass92f33g");
 				textfieldPassword.setText(PBKDF2.generatePasswordFromBytes(hashedBytes, 12));
 				textfieldPassword.setVisible(true);
 
@@ -114,8 +119,7 @@ public class MainWindowController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		else{
+		} else {
 			Alert infoAlert = new Alert(AlertType.INFORMATION);
 			infoAlert.setHeaderText("you must enter domain and username");
 			infoAlert.setTitle("Info");
@@ -132,7 +136,6 @@ public class MainWindowController {
 			textfieldDomainUrl.clear();
 			textfieldUsername.clear();
 			textfieldPassword.clear();
-			textfieldPassword.setVisible(false);
 		} else {
 			showInfoAlert();
 		}
@@ -143,10 +146,9 @@ public class MainWindowController {
 		infoAlert.setHeaderText("No data entered!");
 		infoAlert.setTitle("Info");
 		infoAlert.setContentText("To add an entry use the bottom textfields");
-
 		infoAlert.showAndWait();
 	}
-	
+
 	public String showEnterPwDialog() {
 		TextInputDialog tid = new TextInputDialog();
 		tid.setTitle("Input");
@@ -166,112 +168,156 @@ public class MainWindowController {
 		main.loginWindow();
 	}
 
-	
-	
 	public void openDB() {
-		UserAccount.setPassword("qqqq");
-		
+
 		String enteredPw = showEnterPwDialog();
-		System.out.println(enteredPw);
-		
-		if(enteredPw.equals(UserAccount.getPassword())){
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("File mit Passwörtern auswählen");
-			fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-			FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Database files", "*.db");
-			fileChooser.getExtensionFilters().add(extFilter);
-			File file = fileChooser.showOpenDialog(main.primaryStage);
-			
-			if (file != null) {
-				
-				try {
-					this.dataList = aesProcessor.importDataListFromFile(enteredPw, file);
-					tableView.setItems(dataList);
-				} catch (InvalidKeyException | ClassNotFoundException | NoSuchAlgorithmException
-						| InvalidKeySpecException | NoSuchPaddingException | InvalidAlgorithmParameterException
-						| IllegalBlockSizeException | BadPaddingException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		Properties prop = new Properties();
+		try {
+			prop = AppProperties.loadProperties();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		byte[] saltBytes = Base64.getDecoder()
+				.decode(prop.getProperty("xYga7hGn94nmlfaaLdb.yb1mfbkb-ycurrymitschrankerotweiss"));
+		byte[] pwBytes = Base64.getDecoder()
+				.decode(prop.getProperty("q9p39gAuj3S439gnfx+O<5kxjbnykbcurrymitschrankerotweiss"));
+
+		PBKDF2 pbkdf2 = new PBKDF2();
+		try {
+			byte[] pwHash = pbkdf2.hashMasterPasswordPBKDF2(enteredPw, saltBytes);
+			if (Arrays.equals(pwBytes, pwHash)) {
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Choose database to import");
+				fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Database files", "*.db");
+				fileChooser.getExtensionFilters().add(extFilter);
+				File file = fileChooser.showOpenDialog(main.primaryStage);
+
+				if (file != null) {
+					try {
+						this.dataList = aesProcessor.importDataListFromFile(enteredPw, file);
+						tableView.setItems(dataList);
+						labelNorth.setText("Import complete");
+					} catch (InvalidKeyException | ClassNotFoundException | NoSuchAlgorithmException
+							| InvalidKeySpecException | NoSuchPaddingException | InvalidAlgorithmParameterException
+							| IllegalBlockSizeException | BadPaddingException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					Alert infoAlert = new Alert(AlertType.ERROR);
+					infoAlert.setHeaderText("No File access!");
+					infoAlert.setTitle("Error");
+					infoAlert.setContentText("No access to selected File!");
+					infoAlert.showAndWait();
 				}
+			} else {
+				Alert infoAlert = new Alert(AlertType.ERROR);
+				infoAlert.setHeaderText("Password Mismatch!");
+				infoAlert.setTitle("Error");
+				infoAlert.setContentText("The entered password was not correct!");
+				infoAlert.showAndWait();
 			}
+
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 
 	// File.separator
 	public void handleExportDBBtn() {
 
-		UserAccount.setPassword("qqqq");
-		
 		String enteredPw = showEnterPwDialog();
-		System.out.println(enteredPw);
-		
-		if(enteredPw.equals(UserAccount.getPassword())){
-			
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("DB exportieren");
-			fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-			FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Database files", "*.db");
-			fileChooser.getExtensionFilters().add(extFilter);
-			File file = fileChooser.showSaveDialog(main.primaryStage);
-			if (file != null) {
-				try {
-				
-					aesProcessor.exportDataListContainerToFile(dataList, enteredPw, file);
+		// salz holen,
+		// pwHash holen,
+		// enteredPw mit salz hashen
+		// beide hashes vergleichen
 
-				} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
-						| NoSuchPaddingException | InvalidParameterSpecException | IllegalBlockSizeException
-						| BadPaddingException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	public void btnEncriptor() {
-
+		Properties prop = new Properties();
 		try {
-			byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2("www.yahoo.de", "testuser", "master_M)FPass92f33g");
-			System.out.println("ByteArrayLenght = " + hashedBytes.length);
-			System.out.println(PBKDF2.generatePasswordFromBytes(hashedBytes, 12));
-
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException | UnsupportedEncodingException e) {
+			prop = AppProperties.loadProperties();
+		} catch (IOException e2) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e2.printStackTrace();
+		}
+		byte[] saltBytes = Base64.getDecoder()
+				.decode(prop.getProperty("xYga7hGn94nmlfaaLdb.yb1mfbkb-ycurrymitschrankerotweiss"));
+		byte[] pwBytes = Base64.getDecoder()
+				.decode(prop.getProperty("q9p39gAuj3S439gnfx+O<5kxjbnykbcurrymitschrankerotweiss"));
+
+		PBKDF2 pbkdf2 = new PBKDF2();
+		try {
+			byte[] pwHash = pbkdf2.hashMasterPasswordPBKDF2(enteredPw, saltBytes);
+			if (Arrays.equals(pwBytes, pwHash)) {
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("DB exportieren");
+				fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Database files", "*.db");
+				fileChooser.getExtensionFilters().add(extFilter);
+				File file = fileChooser.showSaveDialog(main.primaryStage);
+				if (file != null) {
+					try {
+
+						aesProcessor.exportDataListContainerToFile(dataList, enteredPw, file);
+						labelNorth.setText("Export complete");
+
+					} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
+							| NoSuchPaddingException | InvalidParameterSpecException | IllegalBlockSizeException
+							| BadPaddingException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					Alert infoAlert = new Alert(AlertType.ERROR);
+					infoAlert.setHeaderText("No File access!");
+					infoAlert.setTitle("Error");
+					infoAlert.setContentText("No access to selected File!");
+					infoAlert.showAndWait();
+				}
+			} else{
+				Alert infoAlert = new Alert(AlertType.ERROR);
+				infoAlert.setHeaderText("Password Mismatch!");
+				infoAlert.setTitle("Error");
+				infoAlert.setContentText("The entered password was not correct!");
+				infoAlert.showAndWait();
+			}
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 
-	
-	
 	public void showTooltipGenerate() {
-		btnGeneratePW.setText("Reveal the PW");
+		labelNorth.setText("Generate a Password");
 	}
+
 	public void hideTooltipGenerate() {
-		btnGeneratePW.setText("");
+		labelNorth.setText("");
 	}
-	public void labelSaveEntered(){
+
+	public void labelSaveEntered() {
 		labelNorth.setText("Save Entry");
 	}
-	public void labelSaveExited(){
-		labelNorth.setText("");
-	}
-	public void labelCopyEntered(){
-		labelNorth.setText("Copy selected Cell to Clipboard");
-	}
-	public void labelCopyExited(){
-		labelNorth.setText("");
-	}
-	public void labelDeleteEntered(){
-		labelNorth.setText("Delete selected Entry");
-	}
-	public void labelDeleteExited(){
-		labelNorth.setText("");
-	}
-	public void labelEncryptEntered(){
-		labelNorth.setText("Show Password");
-	}
-	public void labelEncryptExited(){
+
+	public void labelSaveExited() {
 		labelNorth.setText("");
 	}
 
+	public void labelCopyEntered() {
+		labelNorth.setText("Copy selected Cell to Clipboard");
+	}
+
+	public void labelCopyExited() {
+		labelNorth.setText("");
+	}
+
+	public void labelDeleteEntered() {
+		labelNorth.setText("Delete selected Entry");
+	}
+
+	public void labelDeleteExited() {
+		labelNorth.setText("");
+	}
 }
