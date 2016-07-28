@@ -194,6 +194,8 @@ public class MainWindowController {
 		main.loginWindow();
 	}
 
+	
+	
 	public void openDB() {
 		UserAccount.setPassword("qqqq");
 		
@@ -209,11 +211,19 @@ public class MainWindowController {
 			File file = fileChooser.showOpenDialog(main.primaryStage);
 			
 			if (file != null) {
-							
-				this.dataList = aes.decryptDataListFromFile(enteredPw, file);
-				tableView.setItems(dataList);
+				
+				try {
+					this.dataList = aes2_new.importDataListFromFile(enteredPw, file);
+					tableView.setItems(dataList);
+				} catch (InvalidKeyException | ClassNotFoundException | NoSuchAlgorithmException
+						| InvalidKeySpecException | NoSuchPaddingException | InvalidAlgorithmParameterException
+						| IllegalBlockSizeException | BadPaddingException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+						
 				/*
-				this.dataList = getDataEntriesFromCypheredFile(file);
+				this.dataList = aes.decryptDataListFromFile(enteredPw, file);
 				tableView.setItems(dataList);
 				*/
 			}

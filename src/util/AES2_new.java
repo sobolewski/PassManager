@@ -2,6 +2,7 @@ package util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -127,7 +128,7 @@ public class AES2_new {
 	
 	// auslagern nach einer neuen IO klasse?
 	public ObservableList<DataEntry> importDataListFromFile(String masterPassword, File file)
-			throws FileNotFoundException, IOException, ClassNotFoundException {
+			throws FileNotFoundException, IOException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
 		ArrayList<DataEntry> dataEntryListArray = new ArrayList<DataEntry>();
 
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
@@ -136,16 +137,16 @@ public class AES2_new {
 		byte[] salt = container.getSalt();
 		byte[] iv = container.getIv();
 		byte[] encData = container.getEncryptedData();
+		
+		byte[] decriptedData=  decrypt(encData, salt, masterPassword, iv);
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(decriptedData);
+		ObjectInputStream ois2 = new ObjectInputStream(bais);
+		dataEntryListArray = (ArrayList<DataEntry>) ois2.readObject();
 
-		try {
-			decrypt(encData, salt, masterPassword, iv);
-		} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException
-				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		return FXCollections.observableArrayList(dataEntryListArray);
+		//return FXCollections.observableArrayList(dataEntryListArray);
 		/*
 		 * byte[] decryptedBytes = null; decryptedBytes =
 		 * cipher.doFinal(encBytes);
