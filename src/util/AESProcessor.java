@@ -124,8 +124,6 @@ public class AESProcessor {
 
 	
 	
-	
-	
 	// auslagern nach einer neuen IO klasse?
 	public ObservableList<DataEntry> importDataListFromFile(String masterPassword, File file)
 			throws FileNotFoundException, IOException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {

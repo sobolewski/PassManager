@@ -34,7 +34,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import model.DataEntry;
-import model.UserAccount;
 import util.AESProcessor;
 import util.AppProperties;
 import util.PBKDF2;
