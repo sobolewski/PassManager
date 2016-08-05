@@ -2,124 +2,56 @@
 
 PassManager intends to be a simple  application for storing passwords associated with a domain and a user-account securely (password-vault). This application is written in JavaFX.
 
-**Since we want to achieve a maximum in security  this app needs the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 8 to be installed manually to unlock strong crypto-keylength**
-************
-**Um ein Maximum an Sicherheit zu erreichen ben�tigt diese Anwendung die manuelle Installation der Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 8, um ausreiched breite Schl�ssell�ngen zu erm�glichen**
+### v0.8
+this is an early test version
 
+### Introduction
+![Screenshot](/screenshot.png?raw=true "Optional Title")
 
-### Funktionsweise
 Die Anwendung soll auf zweierlei Arten einsetzbar sein:
-  - Als klassicher Password-Tresor (speicherung von Daten innerhalb der Anwendung)
-  - "portable"- Pass-Generator-Modus (keinerlei Datenspeicherung die Anwendung generiert ein eindeutiges Password f�r die Kombination aus Masterpassword + domain + username)
+  - Als klassicher Password-Tresor (speicherung von Daten)
+  - Als "portabler"- Pass-Generator (keinerlei Datenspeicherung)
 
- Als "Tresor" legt der Benutzer ein password f�r eine domain und einen dazugeh�rigen user-account in einer Liste an. Diese Liste l�sst sich anschlie�end ex- und importieren. Diese Liste wird durch das Masterpassword gesch�tzt, nach entschl�sselung stehen alle Eintr�ge in der �bersicht bereit.
 
- Als "Generator" wird aus der der kombination aus domain, dem user-account und dem masterpassword ein eindeutiges password abgeleitet. Dies hat den vorteil, dass keinerlei benutzerdaten gespeichert werden m�ssen - die Anwedung dient dabei lediglich als Generator f�r ein m�glichst sicheres (= schwer zu merkendes) password. Als benutzer muss man sich somit nur ein sehr starkes masterpassword merken und kann dann f�r jede domain und einen dazugeh�rigen username seine pass�rter generieren und jederzeit auch wieder abfragen. Allerdings ist dabei die exakte schreibweise der domain und username von h�hster wichtigkeit, �ndert man nur ein zeichen so generiert dies ein v�llig anderes password.  Beispiel: generiert man sich  ein pass f�r domain "google" und den dortigen useraccount "m�ller" und schreibt bei n�chsten mal bei der passwordgenerierung bspw. "google.de" und "M�ller" generiert dies ein v�llig anderes password.
+ Als "Tresor" legt der Benutzer ein Password für eine Domain und einen dazugehörigen User-account in einer Liste an. Diese Liste lässt sich anschließend ex- und importieren. Diese Liste wird durch das Masterpassword geschützt, nach Entschlüsselung stehen alle Einträge in der Übersicht bereit.
 
+ **HINWEIS:** Eingetragene Daten müssen in der aktuellen Version jedes mal eportiert und beim Neustart der Anwendung vom jeweiligen Speicherort importiert werden, damit sie nicht verloren gehen!
+
+
+ Als "Generator" leitet die Anwendung aus der der Kombination Domain-Username-Masterpassword ein eindeutiges Password ab. Dies hat den Vorteil, dass keinerlei Benutzerdaten gespeichert werden müssen - die Anwedung dient dabei lediglich als Generator für ein möglichst sicheres (= schwer zu merkendes) Password, welches für die eindeutige Kombination masterpass-domäne-username auch immer dasselbe Ergebnis liefert. Die kleinste Abweichung dieser Inputs führ dabei zu einem völlig anderen Password als Ergebnis. Als Benutzer muss man sich somit nur ein sehr starkes Masterpassword merken und kann dann für jede Domain und einen dazugehörigen Username sein eindeutiges Passwort jedes mal neu generieren lassen. Dabei die exakte Schreibweise für Domain und username sind dabei natürlich zu beachten und man muss sich gut merken, wie man diese setets eingeben möchte, damit auch immer das richtig Password erhält . Beispiel: generiert man sich  ein Pasword für die Domain "google" und den dortigen Useraccount "müller" und schreibt aber bei nächsten Mal bei der Passwordgenerierung bspw. "google.de" und "Müller", so generiert dies ein völlig anderes password als beim Versuch zuvor.
+**********
+
+### Prerequisites
+**Since we want to achieve a maximum in security  this app needs the Java Cryptography Extension [(JCE)](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) Unlimited Strength Jurisdiction Policy Files 8 to be installed manually to unlock strong crypto-keylength.**
+
+**Um ein Maximum an Sicherheit zu erreichen benötigt diese Anwendung die manuelle Installation der Java Cryptography Extension [(JCE)](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) Unlimited Strength Jurisdiction Policy Files 8, um ausreiched lange Schlüssellängen zu ermöglichen.**
+
+***********
 #### Funktionsweise
-You can also:
-  - Import and save files from GitHub, Dropbox, Google Drive and One Drive
-  - Drag and drop files into Dillinger
-  - Export documents as Markdown, HTML and PDF
 
-> The overriding design goal for Markdown's
-> formatting syntax is to make it as readable
-> as possible. The idea is that a
-> Markdown-formatted document should be
-> publishable as-is, as plain text, without
-> looking like it's been marked up with tags
-> or formatting instructions.
+Als **Passowrd-Tresor** dienen die aus der Anwendung exportierten #.db-files. Diese werden mittels eines symmetrischen Hashings passwortbasiert beim Export ver- und beim Import wieder entschlüsselt. Dies wird mittels AES mit Cypher Block Chaining erreicht. Es wird neben einem Initialisierungsvektor für jeden Export ein zufälliges "Salt" von 20 byte Länge generiert und in Verbindung mit dem Masterpassword ein für die symmetrische Verschlüsselung benötigter Schlüssel generiert. Alle datentripel domäne-username-password werden damit verschlüsselt und in einem Zielordner in einer Datei mit der endung db gespeichert. Zusätzlich werden ebenfalls das "Salt" und der Initialisierungsvektor in der Datei abgelegt (diese jedoch unverschlüsselt, da sie für die Entschlüsselung benötigt werden).
 
-This text you see here is *actually* written in Markdown! To get a feel for Markdown's syntax, type some text into the left window and watch the results in the right.
+Beim Import wird mit der korrekten Eingagabe des Masterpoasswords und dem aus der Datei ausgelesenem "Salt" und InitVektors der symmetrische Schlüssel re-generiert mit welchem die Daten im letzten Schritt entschlüsselt und angezeigt werden.
 
-### Version
-3.5.1
+Die **Password-Generatorfunktion** arbeitet auf folgende Weise:
+- Aus der Verknüpfung von domain, dem Username und dem Masterpassword sowie einem "Salt" wird ein Hashwert gebildet. Dies geschieht mittels der PBKDF2+HMAC - Funktion auf Grundlage von SHA512. Für PBKDF2 wird in diesem Fall ein statisches Salt verwendet, um gleiche Ergebnisse bei entsprechenden Funktionsargumenten zu garantieren. Die Anzahl der Iterationen für die PBKDF2 funktion wurde dabei auf 100.000 festgelegt (-> ein regler in einer erweiterten Anwendungsversion ist denkbar)
+- Anschließend muss aus dem 512 bit langem Hashwert ein "lesbares" Password abgeleitet werden, damit es beispielsweise für einen e-mail account verwendet werden kann: Dazu wird ein Alphabet definiert (welches hier aus 93 druckbaren ASCII Zeichen besteht), um daraus abhängig vom Hash Zeichen für Zeichen ein Password zusammenzusetzen
+ (-> nicht jeder webdienst lässt beliebige Zeichen als password zu, evtl einschränkung in zukünfitger version).
 
-### Tech
+```Java
+public static String generatePasswordFromBytes(byte[] hashedBytes, int passwordLength) {
 
-Dillinger uses a number of open source projects to work properly:
+  BigInteger alphabetLen = BigInteger.valueOf(ALPHABET.length());
+  String pw = "";
+  BigInteger bigHashNumber = new BigInteger(hashedBytes);
+  for (int i = 0; i < passwordLength; i++) {
 
-* [AngularJS] - HTML enhanced for web apps!
-* [Ace Editor] - awesome web-based text editor
-* [markdown-it] - Markdown parser done right. Fast and easy to extend.
-* [Twitter Bootstrap] - great UI boilerplate for modern web apps
-* [node.js] - evented I/O for the backend
-* [Express] - fast node.js network app framework [@tjholowaychuk]
-* [Gulp] - the streaming build system
-* [keymaster.js] - awesome keyboard handler lib by [@thomasfuchs]
-* [jQuery] - duh
-
-And of course Dillinger itself is open source with a [public repository][dill]
- on GitHub.
-
-### Installation
-
-Dillinger requires [Node.js](https://nodejs.org/) v4+ to run.
-
-Download and extract the [latest pre-built release](https://github.com/joemccann/dillinger/releases).
-
-Install the dependencies and devDependencies and start the server.
-
-```sh
-$ cd dillinger
-$ npm install -d
-$ node app
+    pw = pw + ALPHABET.charAt(bigHashNumber.mod(alphabetLen).intValue());
+    bigHashNumber = bigHashNumber.divide(alphabetLen);
+  }
+  return pw;
+}
 ```
+> Der Hashwert aus masterpass-domain-username (=hashedBytes) wird zunächst als sehr sehr große Zahl aufgefasst. Diese Zahl wird nun modulo der Länge des Alphabetes gerechnet, so dass bei einer Länge des Alphabetes von 93 immer ein wert zwischen 0 und 92 als Ergebnis herauskommt. Dieser Wert dient dazu ein Zeichen aus dem Alphabet auszuwählen. Damit im Folgenden für die Auswahl eines nächsten Zeichens nicht immer dasselbe Ergebnis erscheint, wird die sehr sehr große Zahl durch die Alphabetlänge geteilt und als neuer Ausgangswert gesetzt.
 
-For production environments...
-
-```sh
-$ npm install --production
-$ npm run predeploy
-$ NODE_ENV=production node app
-```
-
-### Plugins
-
-Dillinger is currently extended with the following plugins
-
-* Dropbox
-* Github
-* Google Drive
-* OneDrive
-
-Readmes, how to use them in your own application can be found here:
-
-* [plugins/dropbox/README.md] [PlDb]
-* [plugins/github/README.md] [PlGh]
-* [plugins/googledrive/README.md] [PlGd]
-* [plugins/onedrive/README.md] [PlOd]
-
-### Development
-
-Want to contribute? Great!
-
-Dillinger uses Gulp + Webpack for fast developing.
-Make a change in your file and instantanously see your updates!
-
-Open your favorite Terminal and run these commands.
-
-First Tab:
-```sh
-$ node app
-```
-
-Second Tab:
-```sh
-$ gulp watch
-```
-
-(optional) Third:
-```sh
-$ karma start
-```
-#### Building for source
-For production release:
-```sh
-$ gulp build --prod
-```
-Generating pre-built zip archives for distribution:
-```sh
-$ gulp build dist --prod
-```
-### Docker
+*********************
