@@ -25,6 +25,7 @@ public class AppProperties {
 			String pwString = Base64.getEncoder().encodeToString(ua.getPassword());
 			String saltString = Base64.getEncoder().encodeToString(ua.getSalt());
 			
+			//ich schreibe das so, damit in dem property-file nicht unmittelbar klar ist was diese einträge sollen
 			prop.setProperty("q9p39gAuj3S439gnfx+O<5kxjbnykbcurrymitschrankerotweiss", pwString); //password
 			prop.setProperty("xYga7hGn94nmlfaaLdb.yb1mfbkb-ycurrymitschrankerotweiss", saltString);	//salt
 

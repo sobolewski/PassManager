@@ -39,7 +39,7 @@
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.58" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../Resources/icons/content-save%20(1).png" />
+                                    <Image url="@../Resources/icons/content-save%20(1).png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -100,7 +100,7 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                            <image>
-                              <Image url="@../../Resources/icons/fingerprint.png" />
+                              <Image url="@../Resources/icons/fingerprint.png" />
                            </image>
                         </ImageView>
                         <Text fill="#607d8b" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="PM::PasswordManager" wrappingWidth="144.166015625" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
@@ -131,7 +131,7 @@
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.74" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../Resources/icons/delete-forever%20(1).png" />
+                                    <Image url="@../Resources/icons/delete-forever%20(1).png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -140,7 +140,7 @@
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.74" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../Resources/icons/content-copy.png" />
+                                    <Image url="@../Resources/icons/content-copy.png" />
                                  </image>
                               </ImageView>
                            </graphic></Button>
@@ -149,7 +149,7 @@
                            <graphic>
                               <ImageView fitHeight="17.0" fitWidth="17.0" opacity="0.84" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../Resources/icons/key-plus.png" />
+                                    <Image url="@../Resources/icons/key-plus.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -182,7 +182,7 @@
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.54" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../Resources/icons/folder-upload.png" />
+                                    <Image url="@../Resources/icons/folder-upload.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -191,7 +191,7 @@
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.54" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../Resources/icons/folder-download.png" />
+                                    <Image url="@../Resources/icons/folder-download.png" />
                                  </image>
                               </ImageView>
                            </graphic></Button>
@@ -199,7 +199,7 @@
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.54" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../Resources/icons/account-switch.png" />
+                                    <Image url="@../Resources/icons/account-switch.png" />
                                  </image>
                               </ImageView>
                            </graphic>

@@ -72,9 +72,7 @@ public class MainWindowController {
 	}
 
 	public void initTestData() {
-		dataList.add(new DataEntry("youhorn.com", "holzTitte1983", "qwertzui"));
-		dataList.add(new DataEntry("www.gmail.de", "hoNk99", "password"));
-		dataList.add(new DataEntry("www.zalando.de", "hoNk99", "Öm.;A=ÜF§"));
+		dataList.add(new DataEntry("www.example.com", "max-Muster", "password1"));
 	}
 
 	public void copyPwToClipboard() {
@@ -110,20 +108,30 @@ public class MainWindowController {
 
 		if (!textfieldDomainUrl.getText().isEmpty() & !textfieldUsername.getText().isEmpty()) {
 			try {
-				byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2(textfieldDomainUrl.getText(), textfieldUsername.getText(),
-						"master_M)FPass92f33g");
+				Properties prop = new Properties();
+				prop = AppProperties.loadProperties();
+	
+				byte[] hashedBytes = PBKDF2.hashedBytesPBKDF2StaticSalt(textfieldDomainUrl.getText(), textfieldUsername.getText(),
+						prop.getProperty("q9p39gAuj3S439gnfx+O<5kxjbnykbcurrymitschrankerotweiss"));
 				textfieldPassword.setText(PBKDF2.generatePasswordFromBytes(hashedBytes, 12));
 				textfieldPassword.setVisible(true);
 
 			} catch (NoSuchAlgorithmException | InvalidKeySpecException | UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (IOException e) {
+				Alert infoAlert = new Alert(AlertType.ERROR);
+				infoAlert.setHeaderText("No File access!");
+				infoAlert.setTitle("Error");
+				infoAlert.setContentText("#no access to useraccount!");
+				infoAlert.showAndWait();
+				e.printStackTrace();
 			}
 		} else {
 			Alert infoAlert = new Alert(AlertType.INFORMATION);
 			infoAlert.setHeaderText("you must enter domain and username");
 			infoAlert.setTitle("Info");
-			infoAlert.setContentText("To add an entry use the bottom textfields");
+			infoAlert.setContentText("#to add an entry use the textfields");
 			infoAlert.showAndWait();
 		}
 	}
@@ -145,14 +153,14 @@ public class MainWindowController {
 		Alert infoAlert = new Alert(AlertType.INFORMATION);
 		infoAlert.setHeaderText("No data entered!");
 		infoAlert.setTitle("Info");
-		infoAlert.setContentText("To add an entry use the bottom textfields");
+		infoAlert.setContentText("#to add an entry use the textfields");
 		infoAlert.showAndWait();
 	}
 
 	public String showEnterPwDialog() {
 		TextInputDialog tid = new TextInputDialog();
 		tid.setTitle("Input");
-		tid.setContentText("Please confirm your Masterpassword: ");
+		tid.setContentText("#confirm your Masterpassword: ");
 		Optional<String> result = tid.showAndWait();
 		return result.get();
 	}
@@ -198,7 +206,7 @@ public class MainWindowController {
 					try {
 						this.dataList = aesProcessor.importDataListFromFile(enteredPw, file);
 						tableView.setItems(dataList);
-						labelNorth.setText("Import complete");
+						labelNorth.setText("#import complete");
 					} catch (InvalidKeyException | ClassNotFoundException | NoSuchAlgorithmException
 							| InvalidKeySpecException | NoSuchPaddingException | InvalidAlgorithmParameterException
 							| IllegalBlockSizeException | BadPaddingException | IOException e) {
@@ -209,14 +217,14 @@ public class MainWindowController {
 					Alert infoAlert = new Alert(AlertType.ERROR);
 					infoAlert.setHeaderText("No File access!");
 					infoAlert.setTitle("Error");
-					infoAlert.setContentText("No access to selected File!");
+					infoAlert.setContentText("#no access to selected File!");
 					infoAlert.showAndWait();
 				}
 			} else {
 				Alert infoAlert = new Alert(AlertType.ERROR);
 				infoAlert.setHeaderText("Password Mismatch!");
 				infoAlert.setTitle("Error");
-				infoAlert.setContentText("The entered password was not correct!");
+				infoAlert.setContentText("#the entered password was not correct!");
 				infoAlert.showAndWait();
 			}
 
@@ -239,7 +247,12 @@ public class MainWindowController {
 		try {
 			prop = AppProperties.loadProperties();
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
+			Alert infoAlert = new Alert(AlertType.ERROR);
+			infoAlert.setHeaderText("#No File!");
+			infoAlert.setTitle("Error");
+			infoAlert.setContentText("#no access to properties!");
+			infoAlert.showAndWait();
+			
 			e2.printStackTrace();
 		}
 		byte[] saltBytes = Base64.getDecoder()
@@ -252,7 +265,7 @@ public class MainWindowController {
 			byte[] pwHash = pbkdf2.hashMasterPasswordPBKDF2(enteredPw, saltBytes);
 			if (Arrays.equals(pwBytes, pwHash)) {
 				FileChooser fileChooser = new FileChooser();
-				fileChooser.setTitle("DB exportieren");
+				fileChooser.setTitle("DB export");
 				fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Database files", "*.db");
 				fileChooser.getExtensionFilters().add(extFilter);
@@ -261,15 +274,76 @@ public class MainWindowController {
 					try {
 
 						aesProcessor.exportDataListContainerToFile(dataList, enteredPw, file);
-						labelNorth.setText("Export complete");
+						labelNorth.setText("#export complete");
 
-					} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
-							| NoSuchPaddingException | InvalidParameterSpecException | IllegalBlockSizeException
-							| BadPaddingException | IOException e) {
+					} catch (InvalidKeyException e ) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-				} else {
+						Alert infoAlert = new Alert(AlertType.ERROR);
+						infoAlert.setHeaderText("Catch InvalidKeyException");
+						infoAlert.setTitle("Error");
+						infoAlert.setContentText("!");
+						infoAlert.showAndWait();
+					} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								Alert infoAlert = new Alert(AlertType.ERROR);
+								infoAlert.setHeaderText("Catch IOException");
+								infoAlert.setTitle("Error");
+								infoAlert.setContentText("!");
+								infoAlert.showAndWait();
+					} catch (BadPaddingException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								Alert infoAlert = new Alert(AlertType.ERROR);
+								infoAlert.setHeaderText("Catch IOException");
+								infoAlert.setTitle("Error");
+								infoAlert.setContentText("!");
+								infoAlert.showAndWait();
+					} catch (IllegalBlockSizeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						Alert infoAlert = new Alert(AlertType.ERROR);
+						infoAlert.setHeaderText("Catch IllegalBlockSizeExceptio");
+						infoAlert.setTitle("Error");
+						infoAlert.setContentText("!");
+						infoAlert.showAndWait();
+					} catch (InvalidParameterSpecException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						Alert infoAlert = new Alert(AlertType.ERROR);
+						infoAlert.setHeaderText("Catch InvalidParameterSpecException");
+						infoAlert.setTitle("Error");
+						infoAlert.setContentText("!");
+						infoAlert.showAndWait();
+					} catch (NoSuchPaddingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						Alert infoAlert = new Alert(AlertType.ERROR);
+						infoAlert.setHeaderText("Catch NoSuchPaddingException");
+						infoAlert.setTitle("Error");
+						infoAlert.setContentText("!");
+						infoAlert.showAndWait();
+					} catch (InvalidKeySpecException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						Alert infoAlert = new Alert(AlertType.ERROR);
+						infoAlert.setHeaderText("Catch InvalidKeySpecException");
+						infoAlert.setTitle("Error");
+						infoAlert.setContentText("!");
+						infoAlert.showAndWait();
+					} catch (NoSuchAlgorithmException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						Alert infoAlert = new Alert(AlertType.ERROR);
+						infoAlert.setHeaderText("Catch NoSuchAlgorithmException");
+						infoAlert.setTitle("Error");
+						infoAlert.setContentText("!");
+						infoAlert.showAndWait();
+					}finally{
+						
+					}}
+				else {
 					Alert infoAlert = new Alert(AlertType.ERROR);
 					infoAlert.setHeaderText("No File access!");
 					infoAlert.setTitle("Error");
@@ -280,17 +354,21 @@ public class MainWindowController {
 				Alert infoAlert = new Alert(AlertType.ERROR);
 				infoAlert.setHeaderText("Password Mismatch!");
 				infoAlert.setTitle("Error");
-				infoAlert.setContentText("The entered password was not correct!");
+				infoAlert.setContentText("#the entered password was not correct!");
 				infoAlert.showAndWait();
 			}
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e1) {
-			// TODO Auto-generated catch block
+			Alert infoAlert = new Alert(AlertType.ERROR);
+			infoAlert.setHeaderText("Catch pbkdf2!");
+			infoAlert.setTitle("Error");
+			infoAlert.setContentText("!");
+			infoAlert.showAndWait();
 			e1.printStackTrace();
 		}
 	}
 
 	public void showTooltipGenerate() {
-		labelNorth.setText("Generate a Password");
+		labelNorth.setText("#generate a password");
 	}
 
 	public void hideTooltipGenerate() {
@@ -298,7 +376,7 @@ public class MainWindowController {
 	}
 
 	public void labelSaveEntered() {
-		labelNorth.setText("Save Entry");
+		labelNorth.setText("#save entry");
 	}
 
 	public void labelSaveExited() {
@@ -306,7 +384,7 @@ public class MainWindowController {
 	}
 
 	public void labelCopyEntered() {
-		labelNorth.setText("Copy selected Cell to Clipboard");
+		labelNorth.setText("#copy selected cell to clipboard");
 	}
 
 	public void labelCopyExited() {
@@ -314,7 +392,7 @@ public class MainWindowController {
 	}
 
 	public void labelDeleteEntered() {
-		labelNorth.setText("Delete selected Entry");
+		labelNorth.setText("#delete selected entry");
 	}
 
 	public void labelDeleteExited() {

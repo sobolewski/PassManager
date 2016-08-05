@@ -43,7 +43,7 @@ public class LoginController {
 			prop = AppProperties.loadProperties();
 		} catch (FileNotFoundException e) {
 			// AppProperties.saveProperties(new UserAccount("",""));
-			labelMessage.setText("Bitte ein Masterpassword festlegen!");
+			labelMessage.setText("#choose a safe master-password. Don't be lazy!");
 			labelMessage.setTextFill(Color.rgb(21, 117, 84));
 			passwordField2.setVisible(true);
 			btnEnter.setVisible(false);
@@ -63,7 +63,7 @@ public class LoginController {
 			if (Arrays.equals(pwBytes, pwHash)) {
 				main.mainWindow();
 			} else {
-				labelMessage.setText("Das Password ist falsch");
+				labelMessage.setText("#wrong password!");
 				labelMessage.setTextFill(Color.rgb(21, 117, 84));
 				return;
 			}
@@ -74,7 +74,7 @@ public class LoginController {
 	}
 
 	public void setMasterpassword() {
-		if (passwordField1.getText().length() >= 3) {
+		if (passwordField1.getText().length() >= 8) {
 
 			if (passwordField1.getText().equals(passwordField2.getText())) {
 
@@ -96,16 +96,16 @@ public class LoginController {
 
 			} else {
 				Alert infoAlert = new Alert(AlertType.ERROR);
-				infoAlert.setHeaderText("Stimmt nicht überein!");
+				infoAlert.setHeaderText("#Missmatch");
 				infoAlert.setTitle("Error");
-				infoAlert.setContentText("Das password stimmt nicht überein");
+				infoAlert.setContentText("Entered passwords are not the same");
 				infoAlert.showAndWait();
 			}
 		} else {
 			Alert infoAlert = new Alert(AlertType.ERROR);
-			infoAlert.setHeaderText("Mindestens 4 Zeichen!");
+			infoAlert.setHeaderText("#too short");
 			infoAlert.setTitle("Error");
-			infoAlert.setContentText("Das Password muss mindestens 4 Zeichen lang sein");
+			infoAlert.setContentText("A strong password should be at least 8 characters long!");
 			infoAlert.showAndWait();
 		}
 	}

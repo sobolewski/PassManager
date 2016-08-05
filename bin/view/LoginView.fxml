@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="600.0" prefWidth="550.0" styleClass="background" stylesheets="@darktheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+<AnchorPane prefHeight="550.0" prefWidth="400.0" styleClass="background" stylesheets="@darktheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
       <VBox layoutX="250.0" layoutY="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -18,7 +18,7 @@
                <children>
                   <ImageView fitHeight="390.0" fitWidth="476.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../Resources/images/hipsterlogogenerator_1468611653605.png" />
+                        <Image url="@/Resources/images/hipsterlogogenerator_1468611653605.png" />
                      </image>
                   </ImageView>
                </children>
@@ -26,7 +26,7 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="468.0">
                <children>
                   <Label fx:id="labelMessage" />
                </children>
@@ -44,17 +44,24 @@
                   <RowConstraints maxHeight="36.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <PasswordField fx:id="passwordField1" alignment="BOTTOM_LEFT" GridPane.columnIndex="1">
+                  <PasswordField fx:id="passwordField1" alignment="BOTTOM_LEFT" promptText="Enter Masterpassword" GridPane.columnIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" />
                      </GridPane.margin></PasswordField>
-                  <Button fx:id="btnEnter" mnemonicParsing="false" onAction="#handleEnterBtn" prefHeight="25.0" prefWidth="84.0" text="Enter" GridPane.columnIndex="2" GridPane.halignment="LEFT">
+                  <Button fx:id="btnEnter" mnemonicParsing="false" onAction="#handleEnterBtn" prefHeight="19.0" prefWidth="66.0" styleClass="button-generate" GridPane.columnIndex="2" GridPane.halignment="LEFT">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
                      <GridPane.margin>
                         <Insets left="10.0" />
-                     </GridPane.margin></Button>
+                     </GridPane.margin>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@/Resources/icons/arrow-right-drop-circle-outline.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                   <PasswordField fx:id="passwordField2" promptText="Reenter Masterpassword" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Button fx:id="btnSetMasterpassword" mnemonicParsing="false" onAction="#setMasterpassword" text="Set Masterpassword" visible="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                      <GridPane.margin>

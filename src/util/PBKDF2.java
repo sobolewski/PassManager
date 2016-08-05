@@ -67,6 +67,25 @@ public class PBKDF2 {
 		// return String.format("%x", new BigInteger(hashedPassword));
 	}
 	
+	public static byte[] hashedBytesPBKDF2StaticSalt(String domain, String username, String masterPassword)
+			throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException {
+
+		byte[] saltBytes = "loi8sa7gl2fsz".getBytes("UTF-8");
+
+		String domainspecificPasswordInput = domain + username + masterPassword;
+		char[] passwordChars = domainspecificPasswordInput.toCharArray();
+		// byte[] saltBytes = salt.getBytes();
+
+		SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+		PBEKeySpec spec = new PBEKeySpec(passwordChars, saltBytes, ITERATIONS, KEY_LENGTH);
+		SecretKey keyFactory = secretKeyFactory.generateSecret(spec);
+		byte[] hashedPassword = keyFactory.getEncoded();
+		return hashedPassword;
+
+		// return String.format("%x", new BigInteger(hashedPassword));
+	}
+	
+	
 	public byte[] hashMasterPasswordPBKDF2(String masterPassword, byte[] randomSalt) throws NoSuchAlgorithmException, InvalidKeySpecException{
 
 		char[] passwordChars = masterPassword.toCharArray();
