@@ -279,23 +279,25 @@ public class MainWindowController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Alert infoAlert = new Alert(AlertType.ERROR);
-						infoAlert.setHeaderText("Catch InvalidKeyException");
+						infoAlert.setHeaderText("Invalid Key");
 						infoAlert.setTitle("Error");
-						infoAlert.setContentText("!");
+						infoAlert.setContentText("It seems that your JavaEnvironment does not allow secure keyleangths."
+								+ " In order allow a secure export of your data please download and install the"
+								+ " Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 8");
 						infoAlert.showAndWait();
 					} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 								Alert infoAlert = new Alert(AlertType.ERROR);
-								infoAlert.setHeaderText("Catch IOException");
+								infoAlert.setHeaderText("IOException");
 								infoAlert.setTitle("Error");
-								infoAlert.setContentText("!");
+								infoAlert.setContentText("#");
 								infoAlert.showAndWait();
 					} catch (BadPaddingException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 								Alert infoAlert = new Alert(AlertType.ERROR);
-								infoAlert.setHeaderText("Catch IOException");
+								infoAlert.setHeaderText("bad padding occured");
 								infoAlert.setTitle("Error");
 								infoAlert.setContentText("!");
 								infoAlert.showAndWait();
@@ -303,7 +305,7 @@ public class MainWindowController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Alert infoAlert = new Alert(AlertType.ERROR);
-						infoAlert.setHeaderText("Catch IllegalBlockSizeExceptio");
+						infoAlert.setHeaderText("IllegalBlockSize");
 						infoAlert.setTitle("Error");
 						infoAlert.setContentText("!");
 						infoAlert.showAndWait();
@@ -311,7 +313,7 @@ public class MainWindowController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Alert infoAlert = new Alert(AlertType.ERROR);
-						infoAlert.setHeaderText("Catch InvalidParameterSpecException");
+						infoAlert.setHeaderText("InvalidParameterSpec");
 						infoAlert.setTitle("Error");
 						infoAlert.setContentText("!");
 						infoAlert.showAndWait();
@@ -319,7 +321,7 @@ public class MainWindowController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Alert infoAlert = new Alert(AlertType.ERROR);
-						infoAlert.setHeaderText("Catch NoSuchPaddingException");
+						infoAlert.setHeaderText("NoSuchPadding");
 						infoAlert.setTitle("Error");
 						infoAlert.setContentText("!");
 						infoAlert.showAndWait();
@@ -327,7 +329,7 @@ public class MainWindowController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Alert infoAlert = new Alert(AlertType.ERROR);
-						infoAlert.setHeaderText("Catch InvalidKeySpecException");
+						infoAlert.setHeaderText("InvalidKeySpec");
 						infoAlert.setTitle("Error");
 						infoAlert.setContentText("!");
 						infoAlert.showAndWait();
@@ -335,7 +337,7 @@ public class MainWindowController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						Alert infoAlert = new Alert(AlertType.ERROR);
-						infoAlert.setHeaderText("Catch NoSuchAlgorithmException");
+						infoAlert.setHeaderText("NoSuchAlgorithm");
 						infoAlert.setTitle("Error");
 						infoAlert.setContentText("!");
 						infoAlert.showAndWait();
