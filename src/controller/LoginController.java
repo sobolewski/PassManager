@@ -42,7 +42,7 @@ public class LoginController {
 			prop = AppProperties.loadProperties();
 		} catch (FileNotFoundException e) {
 			// AppProperties.saveProperties(new UserAccount("",""));
-			labelMessage.setText("#choose a safe master-password. Don't be lazy!");
+			labelMessage.setText("#Initialize: please choose a strong master-password. Don't be lazy!");
 			labelMessage.setTextFill(Color.rgb(21, 117, 84));
 			passwordField2.setVisible(true);
 			btnEnter.setVisible(false);
@@ -97,14 +97,14 @@ public class LoginController {
 				Alert infoAlert = new Alert(AlertType.ERROR);
 				infoAlert.setHeaderText("#Missmatch");
 				infoAlert.setTitle("Error");
-				infoAlert.setContentText("Entered passwords are not the same");
+				infoAlert.setContentText("password does not match.");
 				infoAlert.showAndWait();
 			}
 		} else {
 			Alert infoAlert = new Alert(AlertType.ERROR);
-			infoAlert.setHeaderText("#too short");
+			infoAlert.setHeaderText("#Too short!");
 			infoAlert.setTitle("Error");
-			infoAlert.setContentText("A strong password should be at least 8 characters long!");
+			infoAlert.setContentText("a strong password should be at least 8 characters long!");
 			infoAlert.showAndWait();
 		}
 	}

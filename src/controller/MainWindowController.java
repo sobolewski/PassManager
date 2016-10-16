@@ -71,7 +71,7 @@ public class MainWindowController {
 	}
 
 	public void initTestData() {
-		dataList.add(new DataEntry("www.example.com", "max-Muster", "password1"));
+		dataList.add(new DataEntry("welchome", "#", "#"));
 	}
 
 	public void copyPwToClipboard() {
@@ -159,7 +159,7 @@ public class MainWindowController {
 	public String showEnterPwDialog() {
 		TextInputDialog tid = new TextInputDialog();
 		tid.setTitle("Input");
-		tid.setContentText("#confirm your Masterpassword: ");
+		tid.setContentText("#confirm your masterpassword: ");
 		Optional<String> result = tid.showAndWait();
 		return result.get();
 	}
@@ -216,12 +216,13 @@ public class MainWindowController {
 					Alert infoAlert = new Alert(AlertType.ERROR);
 					infoAlert.setHeaderText("No File access!");
 					infoAlert.setTitle("Error");
-					infoAlert.setContentText("#no access to selected File!");
+					infoAlert.setContentText("#unable to access log-in data. please make sure you have read/write access in the current application folder. "
+							+ "try to relocate the programm file and re-enter your credentials");
 					infoAlert.showAndWait();
 				}
 			} else {
 				Alert infoAlert = new Alert(AlertType.ERROR);
-				infoAlert.setHeaderText("Password Mismatch!");
+				infoAlert.setHeaderText("Password mismatch!");
 				infoAlert.setTitle("Error");
 				infoAlert.setContentText("#the entered password was not correct!");
 				infoAlert.showAndWait();
@@ -249,7 +250,8 @@ public class MainWindowController {
 			Alert infoAlert = new Alert(AlertType.ERROR);
 			infoAlert.setHeaderText("#No File!");
 			infoAlert.setTitle("Error");
-			infoAlert.setContentText("#no access to properties!");
+			infoAlert.setContentText("#unable to access log-in data. please make sure you have read/write access in the current application folder. "
+							+ "try to relocate the programm file and re-enter your credentials");
 			infoAlert.showAndWait();
 			
 			e2.printStackTrace();
